@@ -451,7 +451,6 @@ button {
 .done h2,
 .tools h2,
 .about h2,
-.closing h2,
 .contact h2 {
     font-family: "Playfair Display", Georgia, serif;
 
@@ -468,7 +467,6 @@ button {
 .done h2 span,
 .tools h2 span,
 .about h2 span,
-.closing h2 span,
 .contact h2 span {
     color: #777;
     font-style: italic;
@@ -1118,8 +1116,7 @@ button {
    OM / KONTAKT
 ========================= */
 
-.about,
-.closing {
+.about {
     padding: 120px 10%;
 
     display: flex;
@@ -1416,7 +1413,6 @@ button {
     }
 
     .about,
-    .closing,
     .contact {
         flex-direction: column;
         align-items: flex-start;
@@ -1526,7 +1522,6 @@ button {
     .charts,
     .tools,
     .about,
-    .closing,
     .contact,
     .page-hero,
     .site-footer {
