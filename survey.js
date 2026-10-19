@@ -254,6 +254,11 @@ function showDone() {
     surveyNav.hidden = true;
     doneScreen.hidden = false;
 
+    // Startar celebration-animationen. Klassen sätts här,
+    // efter att sektionen blivit synlig - annars körs
+    // animationen innan något syns och blir överhoppad.
+    doneScreen.classList.add("is-celebrating");
+
     doneText.textContent =
         "Ditt svar är registrerat. Tack för din tid!";
 
