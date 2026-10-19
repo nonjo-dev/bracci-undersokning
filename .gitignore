@@ -1,0 +1,10 @@
+# Inloggning – ska aldrig laddas upp
+.env
+
+# Databasen med alla svar
+data/
+
+node_modules/
+npm-debug.log*
+.DS_Store
+Thumbs.db

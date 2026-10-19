@@ -1,0 +1,40 @@
+# =========================
+#  RENDER
+# =========================
+#
+#  Render läser den här filen och kan skapa tjänsten
+#  med ett klick: Render Dashboard -> New -> Blueprint
+#
+#  Lägg INTE lösenordet eller databasadressen i den här
+#  filen. Render frågar efter värdena och sparar dem
+#  säkert i tjänstens miljövariabler.
+
+services:
+
+  - type: web
+    name: bracci-undersokning
+    runtime: node
+    plan: free
+    region: frankfurt
+
+    # Vi har bara ett beroende (pg), så bygget går fort
+    buildCommand: npm install
+    startCommand: npm start
+
+    # Render kollar att servern lever
+    healthCheckPath: /api/session
+
+    envVars:
+      # Din mailadress. Render frågar efter värdet.
+      - key: BRACCI_EMAIL
+        sync: false
+
+      # Ditt lösenord. Render frågar efter värdet.
+      - key: BRACCI_PASSWORD
+        sync: false
+
+      # Render fyller i det här själv om du väljer
+      # "Connect" mot din databas i dashboarden.
+      # Lämna bort detta om du inte har någon databas.
+      # - key: DATABASE_URL
+      #   sync: false
