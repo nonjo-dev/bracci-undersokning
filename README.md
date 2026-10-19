@@ -175,7 +175,7 @@ ovanför. Servern skriver ut en tydlig varning i loggen om du glömmer.
    git add .
    git commit -m "Marknadsundersokning Bracci"
    git branch -M main
-   git remote add origin https://github.com/DITT-NAMN/bracci-undersokning.git
+   git remote add origin https://github.com/nonjo-dev/bracci-undersokning.git
    git push -u origin main
    ```
 
