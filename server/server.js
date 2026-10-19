@@ -241,6 +241,8 @@ const TILLATET = {
     "/results.js": "results.js",
     "/favicon.svg": "img/favicon.svg",
     "/img/armband.avif": "img/armband.avif",
+    "/img/logga.png": "img/logga.png",
+    "/img/logga.webp": "img/logga.webp",
     "/img/favicon.svg": "img/favicon.svg"
 };
 
@@ -249,7 +251,9 @@ const INNEHALLSTYPER = {
     ".css": "text/css; charset=utf-8",
     ".js": "text/javascript; charset=utf-8",
     ".svg": "image/svg+xml",
-    ".avif": "image/avif"
+    ".avif": "image/avif",
+    ".png": "image/png",
+    ".webp": "image/webp"
 };
 
 

@@ -156,19 +156,28 @@ button {
 ========================= */
 
 .hero {
-    min-height: 80vh;
+    min-height: 100vh;
 
     display: flex;
     align-items: center;
 
-    padding: 100px 10%;
+    padding: 130px 10% 80px;
 
-    background:
-        radial-gradient(circle at 80% 50%, #dedbd2, transparent 35%);
+    position: relative;
+    overflow: hidden;
 }
 
 .hero-content {
     max-width: 650px;
+
+    /* position: relative är nödvändigt - z-index gäller bara
+       positionerade elementen. Utan relative låter texten på
+       mobil/tablet ligga bakom cirkeln med loggan, eftersom
+       cirkeln är position: absolute. */
+    position: relative;
+    z-index: 2;
+
+    animation: fadeUp 1s ease;
 }
 
 .small-title,
@@ -188,12 +197,29 @@ button {
 .page-hero h1 {
     font-family: "Playfair Display", Georgia, serif;
 
+    /* 110px i stället för originalets 130px. Rubriken här är
+       längre än deras ("Wear your story."), så vid 130px bryts
+       "Vår riktning." över två rader. */
     font-size: clamp(54px, 8vw, 110px);
 
-    line-height: 0.95;
+    line-height: 0.9;
     font-weight: 500;
 
-    margin-bottom: 30px;
+    margin-bottom: 35px;
+}
+
+.hero h1 {
+    /* Tre lager, som en upphöjd knapp: en vit kant ovanför som
+       fångar ljuset, en tight skugga som läser som kontakt med
+       underlaget, och en vid mjuk som gör själva lyften. Den
+       vita kanten är det som gör att texten uppfattas som
+       upphöjd snarare än som en smutsig fläck.
+
+       Arvs ned i <span> eftersom text-shadow ärvs, så båda
+       raderna får samma lyft. */
+    text-shadow: -1px -1px 0 rgba(255, 255, 255, .9),
+                 0 4px 8px rgba(0, 0, 0, .20),
+                 0 20px 40px rgba(0, 0, 0, .36);
 }
 
 .hero h1 span,
@@ -214,28 +240,98 @@ button {
     margin-bottom: 30px;
 }
 
+.hero p:not(.small-title) {
+    /* Samma upphöjning, värde för värde, som .hero h1 - texten
+       ska kännas som samma slags lyft. */
+    text-shadow: -1px -1px 0 rgba(255, 255, 255, .9),
+                 0 4px 8px rgba(0, 0, 0, .20),
+                 0 20px 40px rgba(0, 0, 0, .36);
+}
+
+/* Cirkeln är en flex-container så att loggan som barn alltid
+   hamnar mitt i den.
+
+   Storleken skalar med viewporten (clamp) så att cirkeln inte
+   kör över texten på mellanstora skärmar. Rubriken här är
+   längre än på originalsidan, så en fast 550px-cirkel skulle
+   gå över "Vår riktning." redan vid ~1100px. */
 .hero-circle {
-    width: 340px;
-    height: 340px;
+    position: absolute;
 
-    flex-shrink: 0;
+    right: 5%;
+    top: 18%;
 
-    margin-left: 7%;
+    width: clamp(300px, 36vw, 550px);
+    height: clamp(300px, 36vw, 550px);
 
-    background: #dedbd2;
     border-radius: 50%;
+
+    background: #e3e0d8;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
+    /* Loggan dyter under sin egen flytanimation, men klipper
+       ändå bort vad som helst råkar sticka ut. */
     overflow: hidden;
 }
 
-.hero-logo {
-    width: 78%;
+/* Nu ligger <picture> mellan cirkeln och bilden (för att kunna
+   erbjuda webp), och picture är display: block - det fyller då
+   hela cirkeln medan bilden bara är 66% av den. Utan den här
+   regeln hamnade loggan cirka 94px till vänster om mitten.
 
-    mix-blend-mode: multiply;
+   Flexen på picture flyttar centreringen ett steg inåt: nu
+   centreras bilden inuti picture, som i sin tur är centrerad i
+   cirkeln. Dubbel centrering, men det behövs för varje lager. */
+.hero-circle picture {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+}
+
+/* logga.png är 800x800, alltså kvadratisk, och har en krämvit
+   bakgrund (#eae3d7) i stället för genomskinlighet. Därför måste
+   bilden själv klippas till en cirkel - annars sticker de
+   fyrkantiga hörnen ut genom den gråa cirkeln.
+
+   Storleken anges i procent av cirkeln, så loggan skalar med
+   cirkeln utan egna pixelsiffror. 66% i stället för 50% eftersom
+   bilden har mycket luft runt själva monogrammet - annars blir
+   märket nästan osynligt i den stora cirkeln. */
+.hero-logo {
+    width: 66%;
+    height: auto;
+
+    display: block;
+
+    border-radius: 50%;
+
+    /* Tonen i loggan ligger nära cirkelns #e3e0d8, så en tunn
+       mörk ring behövs för att skilja dem åt. */
+    box-shadow: 0 0 0 1px rgba(17, 17, 17, 0.15),
+                0 18px 40px rgba(17, 17, 17, 0.12);
+
+    /* Långsam gungning. Ingen rotation - loggans ordmärke
+       BRACCÌ ska stå rakt. */
+    animation: logoFloat 5s ease-in-out infinite;
+}
+
+/* Gungningen för loggan i heroens gråa cirkel. Ingen rotation -
+   loggans ordmärke BRACCÌ ska stå rakt. */
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-18px);
+    }
+
 }
 
 
@@ -1177,17 +1273,49 @@ button {
 
 @media (max-width: 900px) {
 
+    /* Hero - låt sektionen följa sitt innehåll.
+       min-height: 100vh tvingade heroen till en hel skärmhöjd,
+       men innehållet är bara ca 350-370px högt på telefon och
+       surfplatta. */
     .hero {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 60px;
+        min-height: auto;
+
+        padding: 60px 7% 50px;
     }
 
-    .hero-circle {
-        width: 240px;
-        height: 240px;
+    /* Cirkeln med loggan ligger BAKOM texten. .hero-content har
+       position: relative + z-index: 2 (se basreglerna), så rubrik
+       och brödtext ligger ovanpå.
 
-        margin-left: 0;
+       left: 74% trycker skivan mycket åt höger (50% vore mitt
+       på skärmen). Procenttalet bestäms av loggan, inte av
+       skivan: märket är 66% av skivan och måste rymmas mellan
+       skivans mittpunkt och skärmkanten.
+
+       opacity 0.35 gör att loggan ligger som ett ljust
+       bakgrundslager - den ska anas snarare än konkurrera med
+       texten.
+
+       rotate(15deg) vänder monogrammet medsols. Den grå skivan är
+       rund så märks rotationen bara i loggan, och eftersom rotate
+       står efter translateX snurrar den kring cirkelns egen
+       mittpunkt.
+
+       Skivan klipps av heroens overflow: hidden där den går utanför
+       skärmen. Det är avsiktligt - den ska kännas som ett
+       bakgrundslager, inte som en dekoration med kant. */
+    .hero-circle {
+        position: absolute;
+
+        left: 74%;
+        top: 14%;
+
+        transform: translateX(-50%) rotate(15deg);
+
+        width: 400px;
+        height: 400px;
+
+        opacity: 0.35;
     }
 
     .stats {
@@ -1258,6 +1386,28 @@ button {
         padding-right: 7%;
     }
 
+    /* Mindre skiva på mobil, så att märket fortfarande ryms
+       innanför skärmkanten trots att skivan flyttats långt åt
+       höger. Loggan skalar i procent av skivan, så märket blir
+       fortfarande markant nog att inte smälta ihop med rubriken.
+
+       left: 68% med 360px skiva skulle ge loggans högra kant
+       1px utanför skärmen på en 320px-telefon. 300px ger 25px
+       marginal vid 390px och 16px vid 360px.
+
+       top: 26% flyttar skivan nedåt. Ytterligare går inte:
+       bottenkanten får inte passera heroens kant, eftersom
+       nästa sektion har samma bakgrundsfärg och en avklippt
+       skiva då syns som ett hårt streck. */
+    .hero-circle {
+        width: 300px;
+        height: 300px;
+
+        top: 26%;
+
+        left: 68%;
+    }
+
     .stats {
         grid-template-columns: 1fr;
     }
@@ -1284,5 +1434,31 @@ button {
         flex-direction: column;
         align-items: flex-start;
         gap: 12px;
+    }
+}
+
+
+/* =========================
+   REDUCERAD RÖRELSE
+   Respekterar systemets inställning för att minska rörelse.
+   Loggans gungning är dekorativ och stängs av helt.
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .hero-logo {
+        animation: none !important;
+    }
+
+    .hero-content {
+        animation: none !important;
+    }
+
+    .question.is-active {
+        animation: none !important;
+    }
+
+    html {
+        scroll-behavior: auto !important;
     }
 }

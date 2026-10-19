@@ -66,8 +66,19 @@
 
         </div>
 
+        <!-- Loggan ligger som barn i den gråa cirkeln, så flexbox
+             centrerar den mitt i cirkeln utan att någon siffra
+             behöver hållas i synk med cirkelns placering.
+
+             webp-varianterna först: logga.webp väger 14,5 KB mot
+             logga.png:s 650 KB, och alla webbläsare som stöder
+             picture-elementet tar den. PNG:en ligger kvar som
+             fallback. -->
         <div class="hero-circle">
-            <img src="img/armband.avif" alt="Bracc&igrave; armband" class="hero-logo">
+            <picture>
+                <source srcset="img/logga.webp" type="image/webp">
+                <img src="img/logga.png" alt="Bracc&igrave;" class="hero-logo" width="800" height="800">
+            </picture>
         </div>
 
     </section>
