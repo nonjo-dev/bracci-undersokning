@@ -880,24 +880,6 @@ button {
     transform: none;
 }
 
-.login-note {
-    font-size: 12px;
-
-    color: #999;
-    line-height: 1.7;
-
-    margin-top: 35px;
-}
-
-.login-note code {
-    font-family: Consolas, monospace;
-    font-size: 11px;
-
-    background: #e9e6de;
-
-    padding: 2px 6px;
-}
-
 .nav-logout {
     background: none;
     border: none;
