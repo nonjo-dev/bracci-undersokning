@@ -451,6 +451,7 @@ button {
 .done h2,
 .tools h2,
 .about h2,
+.questions-about h2,
 .contact h2 {
     font-family: "Playfair Display", Georgia, serif;
 
@@ -467,6 +468,7 @@ button {
 .done h2 span,
 .tools h2 span,
 .about h2 span,
+.questions-about h2 span,
 .contact h2 span {
     color: #777;
     font-style: italic;
@@ -1362,6 +1364,98 @@ button {
     user-select: none;
 }
 
+
+/* =========================
+   VAD VI FRAGAR
+========================= */
+
+.questions-about {
+    padding: 85px 10%;
+
+    background: #fff;
+
+    border-top: 1px solid #e6e4de;
+
+    /* Navbaren är sticky, så ankarlänkar måste ta hänsyn till
+       dess höjd annars hamnar rubriken under den. */
+    scroll-margin-top: 90px;
+}
+
+.questions-about-head {
+    /* Rubriken är bred - den ska rymmas på en rad. Brödtexten
+       nedan har en egen, smalare max-width. */
+    max-width: 780px;
+
+    margin-bottom: 55px;
+}
+
+.questions-about-head p:not(.section-label) {
+    color: #666;
+
+    line-height: 1.8;
+
+    max-width: 500px;
+}
+
+/* Rutnätet ligger på en grå bakgrund och korten har samma
+   bakgrund som sektionen. Det ger tunna linjer mellan korten
+   utan ramar - samma grepp som .stats använder. */
+.questions-about-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+
+    background: #e6e4de;
+
+    border: 1px solid #e6e4de;
+}
+
+.about-question {
+    background: #fff;
+
+    padding: 32px 28px 36px;
+}
+
+.about-question-nummer {
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: 12px;
+    letter-spacing: 2px;
+
+    color: #999;
+
+    margin-bottom: 16px;
+}
+
+.about-question h3 {
+    font-family: "Playfair Display", Georgia, serif;
+
+    font-size: 25px;
+    font-weight: 500;
+
+    margin-bottom: 14px;
+}
+
+.about-question p:not(.about-question-nummer) {
+    color: #666;
+
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.questions-about-note {
+    max-width: 620px;
+
+    margin-top: 40px;
+}
+
+.questions-about-note p {
+    color: #777;
+
+    font-size: 13px;
+    line-height: 1.8;
+}
+
 .contact {
     padding: 70px 10%;
 
@@ -1620,6 +1714,11 @@ button {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* Rutnätet med de fyra frågorna blir två kolumner. */
+    .questions-about-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
     .about,
     .contact {
         flex-direction: column;
@@ -1730,6 +1829,7 @@ button {
     .charts,
     .tools,
     .about,
+    .questions-about,
     .contact,
     .page-hero,
     .site-footer {
@@ -1757,6 +1857,12 @@ button {
         top: 26%;
 
         left: 68%;
+    }
+
+    /* En kolumn på mobil - texten i korten blir för smal
+       i två spalter. */
+    .questions-about-grid {
+        grid-template-columns: 1fr;
     }
 
     /* Mindre marginaler mellan footerkolumnerna, så att de

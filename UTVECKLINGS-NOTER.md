@@ -215,8 +215,33 @@ räcker.
 | `9dd7c51` | 19 okt | Closing-sektionen ("TACK / Till alla som svarade") borttagen |
 | `c2910b2` | 19 okt | Text om medarbetarbehörighet under logga in-knappen |
 | `4314efc` | 19 okt | Knappen "Se resultatet" borttagen. `img/armband.avif` och dess allowlist-post rensade |
-| `7126fdb` | 19 okt | Mellanrummen mellan sektionerna minskade. Celebration-animation lades till |
+| `7126fdb` | 19 okt | Mellanrummen mellan sektionerna minskade. Celebration-animation lages till |
 | `54624ca` | 20 okt | GitHub Action som håller Render-tjänsten vaken + README-avsnitt |
+| `b98e49f` | 20 okt | Utvecklingsnoter: arkitektur, ändringslogg, kända problem, testmetoder |
+| `b??????` | 20 okt | Stavningskontroll och rättningar. Ny sektion "Vad vi frågar" |
+
+### Rättningar från stavningskontrollen
+
+Stavningskontrollen hittade **inga riktiga stavfel** i sajtens text, men
+några andra fel:
+
+- **Faktiskt fel:** den tomma lägesrutan på resultatsidan sa *"Inga svar
+  finns sparade i den här webbläsaren ännu."* Svaren ligger på servern,
+  inte i webbläsaren. Nu står det *"Inga svar har kommit in ännu."*
+- **Språkblandning:** kontaktsektionens rubrik var "GET IN TOUCH" på en
+  helt svensk sida. Nu "KONTAKT OSS".
+- **Skrivregel:** *"så år ditt svar värt"* → *"så att ditt svar värt"*.
+- **Versaler i källkoden:** "BRACCì" → "BRACCIÌ" (CSS `text-transform`
+  tog tidigare ut skillnaden visuellt).
+- **Nytt ankare:** sektionen "Vad vi frågar" har `id="fragor"`, så den
+  går att länka till.
+
+### Ny sektion: "Vad vi frågar"
+
+index.html fick en sektion som förklarar vad de fyra frågorna mäter och
+hur svaren används. Rutnätet är fyra kort med tunna linjer emellan —
+samma grepp som `.stats` använder. Två kolumner under 900 px, en kolumn
+under 640 px.
 
 ### Designändringar i korthet
 
@@ -358,6 +383,41 @@ git status -sb                          # "main...origin/main" = rent
 git ls-tree -r --name-only origin/main  # vad som faktiskt finns i repot
 git check-ignore -v data/bracci.db      # bekräfta att data/ ignoreras
 ```
+
+### Stavningskontroll
+
+Det finns ingen svensk ordlista i Windows eller pip-paketen som är
+färdiga att använda direkt (`pyspellchecker` saknar svenska). Funkar
+istället så här:
+
+1. **Hunspell-ordlista** med affixregler:
+   ```
+   https://raw.githubusercontent.com/wooorm/dictionaries/main/dictionaries/sv/index.dic
+   https://raw.githubusercontent.com/wooorm/dictionaries/main/dictionaries/sv/index.aff
+   ```
+   Ordlistan innehåller grundord; böjningsformer ("finns", "enkelt",
+   "gillar") måste genereras från `.aff`-reglerna. Saknar man det står
+   nästan varje vanligt ord som okänt.
+
+2. **Frekvenslista** med de 50 000 vanligaste orden:
+   ```
+   https://raw.githubusercontent.com/hermitdave/FrequencyWords/master/content/2018/sv/sv_50k.txt
+   ```
+   Formatet är `"ord antal"` — ordet står först.
+
+3. **Kombinera de två.** Ett ord godkänns om det finns i någon av dem.
+   Då slipper man böjningsformer och sammansättningar som falsklarm,
+   samtidigt som riktiga stavfel inte passerar.
+
+4. **Extra filter** i koden: hoppa över ord med bindestreck, acronymer
+   och varumärken (`braccì`, `instagram`, `uf` …).
+
+> Teckenklass: använd `[^\W\d_]+` med `re.UNICODE` i stället för en
+> explicit lista — annars kapas "Braccì" i "Bracc" + "ì" eftersom
+> `ì` inte finns i listan.
+>
+> **PowerShell 5.1 läser UTF-8-filer som ANSI** och tecknen blir
+> trasiga. Gör allt med Python i stället — där är UTF-8 default.
 
 ---
 

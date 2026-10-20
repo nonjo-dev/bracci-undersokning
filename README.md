@@ -14,6 +14,31 @@ Svaren sparas på en server och resultatet är skyddat med inloggning.
 
 Fråga 1–3 visas i en meny där man klickar fram. Fråga 4 är en 1–5-skala.
 
+### Vad varje fråga mäter
+
+| # | Mäter | Så används svaret |
+|---|-------|--------------------|
+| 1 | **Köplust** | Om det finns intresse över huvud taget. Antalet "Ja" visas som "Vill köpa" i procent, och diagrammet visar alla tre alternativen (Ja / Nej / Kanske). |
+| 2 | **Stil** | Vilken riktning nästa kollektion ska utvecklas i. Det vanligaste svaret visas som "mest populära stilen". |
+| 3 | **Pris** | Vad som känns rimligt. Medelvärdet av svaren ger "snittpriset" på resultatsidan, så att vi kan placera armbanden rätt. |
+| 4 | **Design** | Hur mycket vi kan investera i detaljerna. Medelvärdet visas som "Design (snitt)" — en låg siffra betyder att hantverket väger tyngre än designen. |
+
+Snittpriset räknas fram med mitten av varje prisintervall (40, 75, 150
+och 250 kr), eftersom svaren är intervall och inte exakta belopp. Det
+gör värdet till en uppskattning, inte en faktisk medelprisering.
+
+### Så hanteras svaren
+
+- **Anonymt.** Inga namn, inga mailadresser, inga IP-adresser sparas
+  tillsammans med svaret. Formuläret skickar bara de fyra svaren.
+- **Aggregerat.** Resultatsidan visar antal svar, andelar, medelvärden och
+  stapeldiagram — aldrig enskilda svar.
+- **Skyddat.** `/api/svar`, `/api/svar.csv` och `/api/svar/renstra` kräver
+  en giltig session. Resultatsidan är alltså bara tillgänglig för Braccìs
+  medarbetare.
+- **Inga kakor för besökaren.** En svarsession lagras inte i webbläsaren,
+  bara en kortlivad inloggningscookie för medarbetarna.
+
 ---
 
 ## Kom igång
