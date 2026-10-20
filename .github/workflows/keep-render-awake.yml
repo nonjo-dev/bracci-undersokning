@@ -1,0 +1,60 @@
+# =========================
+#  HÅLL RENDER VAKEN
+# =========================
+#
+#  Render free-planens webbtjänster somnar efter 15 minuter
+#  utan inkommande trafik. Nästa besökare får då vänta upp till
+#  en minut medan servern startar ("Render displays a loading page
+#  to connecting browsers while a service is spinning up").
+#
+#  Den här workflown skickar ett anrop till /api/session var
+#  14:e minut. Varje anrop räknas som trafik, så tjänsten somnar
+#  aldrig och besökarna slipper vänta.
+#
+#  Kostnad: inget. Actions är gratis för publika repos, och
+#  jobbet tar bara några sekunder.
+#
+#  VIKTIGT: det här löser bara väntetiden. För att svaren ska
+#  överleva måste DATABASE_URL vara satt, annars ligger
+#  databasen på Render's ephemera disk och försvinner när
+#  servern startar om. Se README.md, avsnittet om Postgres.
+#
+#  Vill du inte ha det här? Köp en betald plan (7 $/månad) på
+#  Render - då är tjänsten alltid igång och workflown kan tas
+#  bort.
+
+name: Håll Render vaken
+
+on:
+  schedule:
+    # Var 14:e minut. Render somnar efter 15 minuter, så detta
+    # hinner alltid före. *14 ger 5 körningar i timmen.
+    - cron: "*/14 * * * *"
+
+  # Gör det möjligt att köra workflown manuellt från
+  # fliken Actions i repot
+  workflow_dispatch:
+
+jobs:
+  ping:
+
+    # Låt aldrig två körningar överlappa
+    concurrency:
+      group: keep-render-awake
+      cancel-in-progress: true
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pinga Render
+        run: |
+          # --max-time 90: om tjänsten råkar sova just nu tar
+          # uppstarten cirka en minut, annars skulle anropet
+          # avbrytas i förtid.
+          curl --fail --silent --show-error \
+            --max-time 90 \
+            --retry 2 \
+            --retry-delay 5 \
+            "https://bracci-undersokning.onrender.com/api/session"
+
+          echo "Render svarade - tjänsten hålls vaken"

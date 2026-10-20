@@ -223,6 +223,35 @@ Men Render egna gratisdatabas raderas efter 30 dagar, så det lämpar sig
 bara om undersökningen ska vara igång kortare än så. Annars är Neon
 eller Aiven bättre.
 
+### Sidan sover efter 15 minuter
+
+Render free-planens webbtjänster somnar efter 15 minuter utan
+inkommande trafik. Nästa besökare får då vänta upp till en minut
+medan servern startar, eftersom Render visar en laddningssida under
+uppstarten.
+
+Det finns ett färdigt stöd för det i repot:
+`.github/workflows/keep-render-awake.yml`. Det är en GitHub Action
+som skickar ett anrop till `/api/session` var 14:e minut, vilket
+räknas som trafik så att tjänsten aldrig somnar.
+
+Workflow-filen är redan i repot, så du behöver bara aktivera den:
+
+1. Öppna repot på GitHub och gå till fliken **Actions**
+2. Välj **Håll Render vaken** i listan till vänster
+3. Klicka **Run workflow** och välj **Run workflow** igen
+
+Därefter körs den automatiskt var 14:e minut. Du kan också köra den
+manuellt när du vill.
+
+> Vill du inte ha GitHub Actions igång? Köp en betald plan på Render
+> (7 $/månad). Då är tjänsten alltid igång och du kan ta bort
+> workflow-filen.
+>
+> **Obs:** det här löser bara väntetiden. Svaren överlever bara om
+> `DATABASE_URL` är satt – annars ligger databasen på Render's
+> ephemera disk och försvinner varje gång servern startar om.
+
 ---
 
 ## Filer
