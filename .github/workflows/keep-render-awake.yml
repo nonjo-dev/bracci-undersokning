@@ -27,9 +27,19 @@ name: Håll Render vaken
 
 on:
   schedule:
-    # Var 14:e minut. Render somnar efter 15 minuter, så detta
-    # hinner alltid före. *14 ger 5 körningar i timmen.
-    - cron: "*/14 * * * *"
+    # Var 14:e minut, men vid ODDa minuter: 07, 21, 35 och 49.
+    #
+    # GitHub's schemaläggning är som mest konkurrensutsatt vid
+    # :00 och :30 - då är chansen att körningen hoppas över
+    # störst. Udda minuter går betydligt säkrare. (Render somnar
+    # efter 15 minuter, så 14 minuters mellanrum hinner före.)
+    - cron: "7,21,35,49 * * * *"
+
+  # Körs även vid varje push till main. Då pingas Render direkt
+  # efter en deploy, utan att behöva vänta på schemat.
+  push:
+    branches:
+      - main
 
   # Gör det möjligt att köra workflown manuellt från
   # fliken Actions i repot
@@ -51,6 +61,9 @@ jobs:
           # --max-time 90: om tjänsten råkar sova just nu tar
           # uppstarten cirka en minut, annars skulle anropet
           # avbrytas i förtid.
+          #
+          # --retry: tål ett par tillfälliga fel, till exempel
+          # under en pågående deploy.
           curl --fail --silent --show-error \
             --max-time 90 \
             --retry 2 \

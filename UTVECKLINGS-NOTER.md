@@ -101,20 +101,55 @@ nästa besökare får vänta upp till en minut medan servern startar.
 `/api/session` var 14:e minut. Varje anrop räknas som trafik, så tjänsten
 sover aldrig.
 
-**Den måste aktiveras manuellt en gång:**
+**Workflow-filen är redan i repot**, men schemaläggningen startar inte
+alls förrän GitHub registrerar schemat. Det tar ibland flera timmar, och
+i vissa fall startar den aldrig. Så här gick det här:
 
-1. Öppna repot → fliken **Actions**
-2. Välj **Håll Render vaken**
-3. Klicka **Run workflow** → **Run workflow**
+| Kontroll | Resultat |
+|---|---|
+| Workflown `active` i API:t | ✅ |
+| Filen på `main`, ingen BOM, giltig YAML | ✅ |
+| `workflow_dispatch` | ✅ körs och lyckas |
+| `schedule` | ❌ **noll körningar** efter 2 timmar |
+| Live-sajten vs `origin/main` | ✅ byte-identisk |
+| Svarstid på live-sajten | 23,6 s första gången, 0,17 s direkt efter |
 
-> Health check hjälper inte på free-planen. Render skickar health checks
-> för att hitta trasiga instanser, inte för att hålla free-tjänster vakna.
-> Se Render docs, "Spinning down on idle".
+**Inget var fel i repot** — problemet är GitHub's egen schemaläggning.
+Det är ett känt plattformsproblem för **nycklade** schemalagda workflows:
+tidigare fungerande workflows fortsätter köra, men nya triggar inte
+alls. Se GitHub community discussion #185081 och #203822.
 
-### Vill du slippa vänta helt?
+Lösningar som fungerar:
 
-Betald plan (7 $/månad) — då är tjänsten alltid igång och workflow-filen
-kan tas bort.
+1. **Flytta cron till udda minuter.** GitHub hoppar över körningar vid
+   :00 och :30. Nu används `7,21,35,49 * * * *` i stället för `*/14`.
+2. **Lägg till `push`-trigger**, så varje deploy också pingar Render.
+3. **UptimeRobot** (gratis, 5 minuters intervall) — det säkraste
+   alternativet. README har stegen.
+4. **Betald plan på Render** (7 $/månad) — inga laddningssidor alls.
+
+### Vad jag kontrollerade innan jag skylde på GitHub
+
+Bra att kontrollera i den ordningen:
+
+```powershell
+# 1. Svarar sajten alls, och hur lång tid tar det?
+curl.exe -s -o NUL -w "HTTP %{http_code}  %{time_total}s`n" --max-time 120 `
+    https://bracci-undersokning.onrender.com/
+
+# 2. Är live-versionen identisk med repot? (byte för byte)
+$live = (curl.exe -s https://.../index.html) -join "`n"
+$repo = (git show origin/main:index.html) -join "`n"
+$live.Trim() -eq $repo.Trim()
+
+# 3. Har schemalagda körningar verkligen skett?
+curl.exe -s "https://api.github.com/repos/nonjo-dev/bracci-undersokning/actions/runs" |
+    python -c "import sys,json; [print(r['created_at'], r['event'], r['conclusion']) for r in json.load(sys.stdin)['workflow_runs']]"
+```
+
+Punkt 3 är viktig: kolla på fältet `event`. Ett `schedule`-event är
+nödvändigt — `workflow_dispatch` betyder att någon tryckt knappen
+manuellt.
 
 ---
 

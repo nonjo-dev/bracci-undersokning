@@ -260,19 +260,46 @@ Det finns ett färdigt stöd för det i repot:
 som skickar ett anrop till `/api/session` var 14:e minut, vilket
 räknas som trafik så att tjänsten aldrig somnar.
 
-Workflow-filen är redan i repot, så du behöver bara aktivera den:
+Workflow-filen är redan i repot. Du behöver bara se till att den
+körs:
 
 1. Öppna repot på GitHub och gå till fliken **Actions**
 2. Välj **Håll Render vaken** i listan till vänster
 3. Klicka **Run workflow** och välj **Run workflow** igen
 
-Därefter körs den automatiskt var 14:e minut. Du kan också köra den
-manuellt när du vill.
+Därefter körs den automatiskt vid varje push och vid varje
+schemalagd tidpunkt. Du kan också köra den manuellt när du vill.
 
-> Vill du inte ha GitHub Actions igång? Köp en betald plan på Render
-> (7 $/månad). Då är tjänsten alltid igång och du kan ta bort
-> workflow-filen.
->
+> **Om schemat inte verkar köra:** GitHub hoppar ibland över
+> schemalagda körningar, särskilt vid :00 och :30. Därför kör
+> workflown vid udda minuter (07, 21, 35, 49). Om den fortfarande
+> inte kickar igång, använd UptimeRobot nedan — det är det
+> säkraste alternativet.
+
+### Säkraste alternativet: UptimeRobot
+
+[UptimeRobot](https://uptimerobot.com) har en gratis plan som
+kontrollerar en adress var femte minut. Det är byggt just för
+det här och är betydligt mer tillförlitligt än GitHub's
+schemaläggning.
+
+1. Skapa ett konto på uptimerobot.com
+2. **Add New Monitor** → typ **HTTP(s)**
+3. Friendly name: `bracci-undersokning`
+4. URL: `https://bracci-undersokning.onrender.com/api/session`
+5. Monitoring interval: **5 minutes**
+6. **Create Monitor**
+
+Du behöver inte betala för något. Kontrollen träffar `/api/session`
+eftersom den route:en inte rör databasen när ingen cookie skickas
+med — den är alltså nästan gratis i resurser.
+
+### Vill du inte ha något av det här?
+
+Köp en betald plan på Render (7 $/månad). Då är tjänsten alltid igång,
+du slipper laddningssidan och kan ta bort både workflow-filen och
+UptimeRobot-kontrollen.
+
 > **Obs:** det här löser bara väntetiden. Svaren överlever bara om
 > `DATABASE_URL` är satt – annars ligger databasen på Render's
 > ephemera disk och försvinner varje gång servern startar om.
